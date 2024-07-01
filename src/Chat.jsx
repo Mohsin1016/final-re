@@ -5,6 +5,7 @@ import { uniqBy } from "lodash";
 import Contact from "./Contact";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
+import "./Chat.css";
 
 export default function Chat() {
   const [ws, setWs] = useState(null);
@@ -21,7 +22,7 @@ export default function Chat() {
   }, [selectedUserId]);
 
   function connectToWs() {
-    const ws = new WebSocket('ws://localhost:4040');
+    const ws = new WebSocket('wss://final-api-1.onrender.com');
     setWs(ws);
     ws.addEventListener('message', handleMessage);
     ws.addEventListener('close', () => {
@@ -59,7 +60,7 @@ export default function Chat() {
       setUserName(null);
     });
   }
-
+  
   function sendFile(ev) {
     const reader = new FileReader();
     reader.readAsDataURL(ev.target.files[0]);
@@ -79,7 +80,6 @@ export default function Chat() {
       file,
     }));
     if (file) {
-      console.log(file);
       axios.get('/messages/' + selectedUserId).then(res => {
         setMessages(res.data);
       });
@@ -93,6 +93,8 @@ export default function Chat() {
       }]));
     }
   }
+
+
 
   useEffect(() => {
     const div = divUnderMessages.current;
@@ -129,7 +131,7 @@ export default function Chat() {
 
   return (
     <div className="flex h-screen">
-      <div className="bg-white w-1/3 flex flex-col">
+      <div className="people-tab w-1/3 flex flex-col">
         <div className="flex-grow">
           <Logo />
           {Object.keys(onlinePeopleExclOurUser).map(userId => (
@@ -152,7 +154,7 @@ export default function Chat() {
           ))}
         </div>
         <div className="p-2 text-center flex items-center justify-center">
-          <span className="mr-2 text-sm text-gray-600 flex items-center">
+          <span className="mr-2 text-sm flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
               <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5a18.683 18.683 0 01-7.812-1.7.75.75 0 01-.437-.695z" clipRule="evenodd" />
             </svg>
@@ -160,10 +162,10 @@ export default function Chat() {
           </span>
           <button
             onClick={logout}
-            className="text-sm bg-blue-100 py-1 px-2 text-gray-600 border rounded-sm">Logout</button>
+            className="text-sm chat-tab py-1 px-2 text-white border rounded-sm">Logout</button>
         </div>
       </div>
-      <div className="flex flex-col bg-blue-50 w-2/3 p-2">
+      <div className="flex flex-col chat-tab w-2/3 p-2">
         <div className="flex-grow">
           {!selectedUserId && (
             <div className="flex h-full items-center justify-center">
@@ -179,10 +181,9 @@ export default function Chat() {
                       {message.text}
                       {message.file && (
                         <div>
-                          <a target="_blank" className="border-b flex items-center gap-1" href={message.file}>
+                          <a target="_blank" className="border-b flex items-center gap-1" href={axios.defaults.baseURL + '/uploads/' + message.file}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                              <path fillRule="evenodd" d="M19.5 20.25a.75.75 0 01-.75.75H5.25a.75.75 0 010-1.5H18V3.75a.75.75 0 011.5 0v16.5z" clipRule="evenodd" />
-                              <path fillRule="evenodd" d="M18 21a3 3 0 003-3V3a3 3 0 00-3-3H6a3 3 0 00-3 3v15a3 3 0 003 3h12zm-9-7.5H8.25a.75.75 0 000 1.5h.75v1.5H8.25a.75.75 0 000 1.5h.75v.75a.75.75 0 001.5 0v-.75h1.5v.75a.75.75 0 001.5 0v-.75h.75a.75.75 0 000-1.5h-.75v-1.5h.75a.75.75 0 000-1.5h-.75v-.75a.75.75 0 00-1.5 0v.75h-1.5v-.75a.75.75 0 00-1.5 0v.75zm1.5 1.5v1.5h1.5v-1.5h-1.5z" clipRule="evenodd" />
+                              <path fillRule="evenodd" d="M19.5 12a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0zm-11.03-.53a.75.75 0 10-1.06 1.06l3 3c.3.3.77.3 1.06 0l7-7a.75.75 0 00-1.06-1.06L11 13.94l-2.53-2.47z" clipRule="evenodd" />
                             </svg>
                             {message.file}
                           </a>
@@ -198,21 +199,18 @@ export default function Chat() {
         </div>
         {!!selectedUserId && (
           <form className="flex gap-2" onSubmit={sendMessage}>
-            <input
-              type="text"
+            <input type="text"
               value={newMessageText}
               onChange={ev => setNewMessageText(ev.target.value)}
               placeholder="Type your message here"
               className="bg-white border p-2 flex-grow rounded-sm" />
-            <label className="bg-gray-200 p-2 text-gray-600 rounded-sm border border-gray-300 cursor-pointer">
+            <label className="bg-blue-200 p-2 text-gray-600 cursor-pointer rounded-sm border border-blue-200">
               <input type="file" className="hidden" onChange={sendFile} />
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                <path fillRule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M3.75 18a.75.75 0 01.75-.75h15a.75.75 0 010 1.5H4.5a.75.75 0 01-.75-.75zm9.25-14a.75.75 0 01.75.75v11.19l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 011.06-1.06l3.22 3.22V4.75A.75.75 0 0113 4z" clipRule="evenodd" />
               </svg>
             </label>
-            <button type="submit" className="bg-blue-500 p-2 text-white rounded-sm">
-              Send
-            </button>
+            <button type="submit" className="bg-blue-500 p-2 text-white rounded-sm">Send</button>
           </form>
         )}
       </div>
