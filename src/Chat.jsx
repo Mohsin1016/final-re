@@ -60,6 +60,17 @@ export default function Chat() {
       setUserName(null);
     });
   }
+  
+  function sendFile(ev) {
+    const reader = new FileReader();
+    reader.readAsDataURL(ev.target.files[0]);
+    reader.onload = () => {
+      sendMessage(null, {
+        name: ev.target.files[0].name,
+        data: reader.result,
+      });
+    };
+  }
 
   function sendMessage(ev, file = null) {
     if (ev) ev.preventDefault();
@@ -83,16 +94,7 @@ export default function Chat() {
     }
   }
 
-  function sendFile(ev) {
-    const reader = new FileReader();
-    reader.readAsDataURL(ev.target.files[0]);
-    reader.onload = () => {
-      sendMessage(null, {
-        name: ev.target.files[0].name,
-        data: reader.result,
-      });
-    };
-  }
+
 
   useEffect(() => {
     const div = divUnderMessages.current;
