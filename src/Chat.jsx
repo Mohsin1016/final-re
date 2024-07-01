@@ -7,7 +7,6 @@ import Avatar from "./Avatar";
 import Logo from "./Logo";
 import "./Chat.css";
 
-
 export default function Chat() {
   const [ws, setWs] = useState(null);
   const [onlinePeople, setOnlinePeople] = useState({});
