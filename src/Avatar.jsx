@@ -4,8 +4,8 @@ export default function Avatar({ online,username ,userId }) {
     return null; // or render a placeholder/avatar indicating missing user
   }
 
-  const colors = ['bg-teal-200', 'bg-red-200',
-                  'bg-green-200', 'bg-purple-200',
+  const colors = ['bg-[#FF00FF]', 'bg-[#808080]',
+                  'bg-[#00FF00]', 'bg-[#00FFFF]',
                   'bg-blue-200', 'bg-yellow-200',
                   'bg-orange-200', 'bg-pink-200', 'bg-fuchsia-200', 'bg-rose-200'];
   const userIdBase10 = parseInt(userId.substring(10), 16);

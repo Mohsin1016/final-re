@@ -47,3 +47,14 @@
   z-index: 2;
   color: white;
 }
+
+.chat-field {
+  background-color: #281d3b;
+  color : white;
+}
+
+.user-field {
+  background: linear-gradient(to right, #52224b, #312345);
+  /* color : white !important; */
+
+}
